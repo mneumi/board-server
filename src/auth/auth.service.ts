@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { UsersService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { RegisterDto } from './auth.dto';
+import { getRepository } from 'typeorm';
+import { UserEntity } from 'src/user/user.entity';
+import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
+import { UserJwtPayload } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -9,19 +14,63 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { ...result } = user;
-      return result;
+  async register(registerDto: RegisterDto) {
+    const userRepository = getRepository(UserEntity);
+
+    const { username, password, nickname, avatar, desc } = registerDto;
+
+    const user = await userRepository.findOne({ username });
+
+    if (user) {
+      throw new ConflictException('用户名重复');
     }
-    return null;
+
+    const salt = makeSalt();
+    const hashPassword = encryptPassword(password, salt);
+
+    const newUser: Omit<UserEntity, 'id'> = {
+      username,
+      password: hashPassword,
+      salt,
+      nickname,
+      avatar,
+      desc,
+    };
+
+    await userRepository.save(newUser);
+
+    return {
+      error: 0,
+      message: 'ok',
+    };
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async login(user: UserJwtPayload) {
+    const payload: UserJwtPayload = {
+      id: user.id,
+      username: user.username,
+      nickname: user.nickname,
+      avatar: user.avatar,
+      desc: user.desc,
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async validateUser(
+    username: string,
+    password: string,
+  ): Promise<UserEntity | null> {
+    const userRepository = getRepository(UserEntity);
+
+    const user = await userRepository.findOne({ username });
+
+    if (!user || user.password !== encryptPassword(password, user.salt)) {
+      return null;
+    }
+
+    return user;
   }
 }
