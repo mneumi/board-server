@@ -1,11 +1,11 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class AddLinkListDto {
+export class AddMusicListDto {
   @IsNotEmpty()
   title: string;
 }
 
-export class SetLinkListDto {
+export class SetMusicListDto {
   @IsNotEmpty()
   title: string;
 }

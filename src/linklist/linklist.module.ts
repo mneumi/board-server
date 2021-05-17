@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { LinklistController } from './linklist.controller';
-import { LinklistService } from './linklist.service';
+import { LinkListController } from './linklist.controller';
+import { LinkListService } from './linklist.service';
 
 @Module({
-  controllers: [LinklistController],
-  providers: [LinklistService],
+  controllers: [LinkListController],
+  providers: [LinkListService],
 })
-export class LinklistModule {}
+export class LinkListModule {}

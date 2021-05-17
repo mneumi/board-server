@@ -25,22 +25,32 @@ export class LinkController {
     return await this.linkService.addLink(user, addLinkDto);
   }
 
-  @Delete(':id')
+  @Delete(':link_id')
   @UseGuards(AuthGuard('jwt'))
-  async delLink(@User() user: UserJwtPayload, @Param('id') linkId: string) {
-    return await this.linkService.delLink(user, linkId);
+  async delLink(
+    @User() user: UserJwtPayload,
+    @Param('link_id') linkId: string,
+  ) {
+    return await this.linkService.delLink(user, +linkId);
   }
 
-  @Put(':id')
+  @Put(':link_id')
   @UseGuards(AuthGuard('jwt'))
-  async setLink(@User() user: UserJwtPayload, @Body() setLinkDto: SetLinkDto) {
-    return await this.linkService.setLink(user, setLinkDto);
+  async setLink(
+    @User() user: UserJwtPayload,
+    @Param('link_id') linkId: string,
+    @Body() setLinkDto: SetLinkDto,
+  ) {
+    return await this.linkService.setLink(user, +linkId, setLinkDto);
   }
 
-  @Get(':id')
+  @Get(':link_id')
   @UseGuards(AuthGuard('jwt'))
-  async getLink(@User() user: UserJwtPayload, @Param('id') linkId: string) {
-    return await this.linkService.getLink(user, linkId);
+  async getLink(
+    @User() user: UserJwtPayload,
+    @Param('link_id') linkId: string,
+  ) {
+    return await this.linkService.getLink(user, +linkId);
   }
 
   @Get()

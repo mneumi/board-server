@@ -12,10 +12,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserJwtPayload } from 'src/auth/auth.interface';
 import { User } from 'src/user/user.decorator';
-import { AddLinkListDto, SetLinkListDto } from './linkList.dto';
-import { LinkListService } from './linkList.service';
+import { AddLinkListDto, SetLinkListDto } from './linklist.dto';
+import { LinkListService } from './linklist.service';
 
-@Controller('linkList')
+@Controller('linklist')
 export class LinkListController {
   constructor(private readonly linkListService: LinkListService) {}
 
@@ -28,31 +28,36 @@ export class LinkListController {
     return await this.linkListService.addLinkList(user, addLinkListDto);
   }
 
-  @Delete(':id')
+  @Delete(':linklist_id')
   @UseGuards(AuthGuard('jwt'))
   async delLinkList(
     @User() user: UserJwtPayload,
-    @Param('id') linkListId: string,
+    @Param('linklist_id') linkListId: string,
   ) {
-    return await this.linkListService.delLinkList(user, linkListId);
+    return await this.linkListService.delLinkList(user, +linkListId);
   }
 
-  @Put(':id')
+  @Put(':linklist_id')
   @UseGuards(AuthGuard('jwt'))
   async setLinkList(
     @User() user: UserJwtPayload,
+    @Param('linklist_id') linkListId: string,
     @Body() setLinkListDto: SetLinkListDto,
   ) {
-    return await this.linkListService.setLinkList(user, setLinkListDto);
+    return await this.linkListService.setLinkList(
+      user,
+      +linkListId,
+      setLinkListDto,
+    );
   }
 
-  @Get(':id')
+  @Get(':linklist_id')
   @UseGuards(AuthGuard('jwt'))
   async getLinkList(
     @User() user: UserJwtPayload,
-    @Param('id') linkListId: string,
+    @Param('linklist_id') linkListId: string,
   ) {
-    return await this.linkListService.getLinkList(user, linkListId);
+    return await this.linkListService.getLinkList(user, +linkListId);
   }
 
   @Get()

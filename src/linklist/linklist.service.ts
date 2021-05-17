@@ -3,8 +3,8 @@ import { UserJwtPayload } from 'src/auth/auth.interface';
 import { successResponse } from 'src/utils/build_response';
 import { updateObject } from 'src/utils/common';
 import { getRepository } from 'typeorm';
-import { AddLinkListDto, SetLinkListDto } from './linkList.dto';
-import { LinkListEntity } from './linkList.entity';
+import { AddLinkListDto, SetLinkListDto } from './linklist.dto';
+import { LinkListEntity } from './linklist.entity';
 
 @Injectable()
 export class LinkListService {
@@ -21,7 +21,7 @@ export class LinkListService {
     return successResponse(newLinkList);
   }
 
-  async delLinkList(user: UserJwtPayload, linkListId: string) {
+  async delLinkList(user: UserJwtPayload, linkListId: number) {
     const linkList = await this.checkOwner(user, linkListId);
 
     const linkListRepository = getRepository(LinkListEntity);
@@ -31,10 +31,12 @@ export class LinkListService {
     return successResponse(linkList);
   }
 
-  async setLinkList(user: UserJwtPayload, setLinkListDto: SetLinkListDto) {
-    const { id } = setLinkListDto;
-
-    const linkList = await this.checkOwner(user, String(id));
+  async setLinkList(
+    user: UserJwtPayload,
+    linkListId: number,
+    setLinkListDto: SetLinkListDto,
+  ) {
+    const linkList = await this.checkOwner(user, linkListId);
 
     const linkListRepository = getRepository(LinkListEntity);
 
@@ -45,7 +47,7 @@ export class LinkListService {
     return successResponse(linkList);
   }
 
-  async getLinkList(user: UserJwtPayload, linkListId: string) {
+  async getLinkList(user: UserJwtPayload, linkListId: number) {
     const linkList = await this.checkOwner(user, linkListId);
 
     return successResponse(linkList);
@@ -62,15 +64,22 @@ export class LinkListService {
       take,
     });
 
-    return successResponse(list);
+    const total = await linkListRepository.count();
+
+    const result = {
+      total,
+      list,
+    };
+
+    return successResponse(result);
   }
 
-  private async checkOwner(user: UserJwtPayload, linkListId: string) {
+  private async checkOwner(user: UserJwtPayload, linkListId: number) {
     const linkListRepository = getRepository(LinkListEntity);
 
     const linkList = await linkListRepository.findOne({
-      userId: user.id,
       id: linkListId,
+      userId: user.id,
     });
 
     if (!linkList) {

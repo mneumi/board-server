@@ -2,6 +2,9 @@ import { IsNotEmpty } from 'class-validator';
 
 export class AddLinkDto {
   @IsNotEmpty()
+  listId: number;
+
+  @IsNotEmpty()
   url: string;
 
   @IsNotEmpty()
@@ -12,7 +15,7 @@ export class AddLinkDto {
 
 export class SetLinkDto {
   @IsNotEmpty()
-  id: number;
+  listId: number;
 
   @IsNotEmpty()
   url: string;

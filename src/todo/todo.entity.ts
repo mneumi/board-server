@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
-  name: 'link',
+  name: 'todo',
 })
-export class LinkEntity {
+export class TodoEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,13 +14,10 @@ export class LinkEntity {
   listId: number;
 
   @Column()
-  url: string;
-
-  @Column()
-  title: string;
+  content: string;
 
   @Column({
-    default: '',
+    default: false,
   })
-  image: string;
+  done: boolean;
 }

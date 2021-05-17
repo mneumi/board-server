@@ -1,21 +1,23 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserJwtPayload } from 'src/auth/auth.interface';
+import { LinkListEntity } from 'src/linklist/linklist.entity';
 import { successResponse } from 'src/utils/build_response';
 import { updateObject } from 'src/utils/common';
 import { getRepository } from 'typeorm';
 import { AddLinkDto, SetLinkDto } from './link.dto';
-import { LinkEnitty } from './link.entity';
+import { LinkEntity } from './link.entity';
 
 @Injectable()
 export class LinkService {
   async addLink(user: UserJwtPayload, addLinkDto: AddLinkDto) {
-    const linkRepository = getRepository(LinkEnitty);
+    const linkRepository = getRepository(LinkEntity);
 
-    const newLink: Omit<LinkEnitty, 'id'> = {
+    const newLink: Omit<LinkEntity, 'id'> = {
+      userId: user.id,
+      listId: addLinkDto.listId,
       url: addLinkDto.url,
       title: addLinkDto.title,
       image: addLinkDto.image,
-      userId: user.id,
     };
 
     await linkRepository.save(newLink);
@@ -23,22 +25,30 @@ export class LinkService {
     return successResponse(newLink);
   }
 
-  async delLink(user: UserJwtPayload, linkId: string) {
+  async delLink(user: UserJwtPayload, linkId: number) {
     const link = await this.checkOwner(user, linkId);
 
-    const linkRepository = getRepository(LinkEnitty);
+    const linkRepository = getRepository(LinkEntity);
 
     await linkRepository.delete(link);
 
     return successResponse(link);
   }
 
-  async setLink(user: UserJwtPayload, setLinkDto: SetLinkDto) {
-    const { id } = setLinkDto;
+  async setLink(user: UserJwtPayload, linkId: number, setLinkDto: SetLinkDto) {
+    const { listId } = setLinkDto;
 
-    const link = await this.checkOwner(user, String(id));
+    const link = await this.checkOwner(user, linkId);
 
-    const linkRepository = getRepository(LinkEnitty);
+    const linkListRepository = getRepository(LinkListEntity);
+
+    const list = await linkListRepository.find({ id: listId, userId: user.id });
+
+    if (list.length <= 0) {
+      throw new UnauthorizedException();
+    }
+
+    const linkRepository = getRepository(LinkEntity);
 
     updateObject(link, setLinkDto);
 
@@ -47,14 +57,14 @@ export class LinkService {
     return successResponse(link);
   }
 
-  async getLink(user: UserJwtPayload, linkId: string) {
+  async getLink(user: UserJwtPayload, linkId: number) {
     const link = await this.checkOwner(user, linkId);
 
     return successResponse(link);
   }
 
   async listLink(user: UserJwtPayload, page: number, take: number) {
-    const linkRepository = getRepository(LinkEnitty);
+    const linkRepository = getRepository(LinkEntity);
 
     const list = await linkRepository.find({
       where: {
@@ -64,13 +74,25 @@ export class LinkService {
       take,
     });
 
+    const total = await linkRepository.count();
+
+    const result = {
+      total,
+      list,
+    };
+
+    return successResponse(result);
+
     return successResponse(list);
   }
 
-  private async checkOwner(user: UserJwtPayload, linkId: string) {
-    const linkRepository = getRepository(LinkEnitty);
+  private async checkOwner(user: UserJwtPayload, linkId: number) {
+    const linkRepository = getRepository(LinkEntity);
 
-    const link = await linkRepository.findOne({ userId: user.id, id: linkId });
+    const link = await linkRepository.findOne({
+      id: linkId,
+      userId: user.id,
+    });
 
     if (!link) {
       throw new UnauthorizedException();
