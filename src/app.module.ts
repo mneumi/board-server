@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinkModule } from './link/link.module';
 import { LinkListModule } from './linklist/linklist.module';
 import { TodoModule } from './todo/todo.module';
