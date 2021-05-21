@@ -15,8 +15,10 @@ export class MusicService {
     const newMusic: Omit<MusicEntity, 'id'> = {
       userId: user.id,
       listId: addMusicDto.listId,
-      content: addMusicDto.content,
-      done: false,
+      singer: addMusicDto.singer,
+      song: addMusicDto.song,
+      language: addMusicDto.language,
+      coverImg: addMusicDto.coverImg,
     };
 
     await musicRepository.save(newMusic);

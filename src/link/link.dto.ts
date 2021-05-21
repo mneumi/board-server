@@ -10,6 +10,7 @@ export class AddLinkDto {
   @IsNotEmpty()
   title: string;
 
+  @IsNotEmpty()
   image: string;
 }
 

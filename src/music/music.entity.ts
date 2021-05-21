@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MusicLanguage } from './music.interface';
 
 @Entity({
   name: 'music',
@@ -14,10 +15,17 @@ export class MusicEntity {
   listId: number;
 
   @Column()
-  content: string;
+  song: string;
+
+  @Column()
+  singer: string;
+
+  @Column()
+  coverImg: string;
 
   @Column({
-    default: false,
+    type: 'enum',
+    enum: MusicLanguage,
   })
-  done: boolean;
+  language: MusicLanguage;
 }

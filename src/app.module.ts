@@ -8,6 +8,7 @@ import { TodoModule } from './todo/todo.module';
 import { TodoListModule } from './todolist/todolist.module';
 import { MusicModule } from './music/music.module';
 import { MusicListModule } from './musiclist/musiclist.module';
+import { UploadModule } from './upload/upload.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -19,6 +20,7 @@ import { MusicListModule } from './musiclist/musiclist.module';
     TodoListModule,
     MusicModule,
     MusicListModule,
+    UploadModule,
   ],
 })
 export class AppModule {}

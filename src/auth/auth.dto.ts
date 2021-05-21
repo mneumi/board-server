@@ -1,3 +1,4 @@
-import { UserType } from 'src/user/user.interface';
-
-export type RegisterDto = UserType;
+export type RegisterDto = {
+  username: string;
+  password: string;
+};

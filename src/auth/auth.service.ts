@@ -17,7 +17,7 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const userRepository = getRepository(UserEntity);
 
-    const { username, password, nickname, avatar, desc } = registerDto;
+    const { username, password } = registerDto;
 
     const user = await userRepository.findOne({ username });
 
@@ -32,9 +32,10 @@ export class AuthService {
       username,
       password: hashPassword,
       salt,
-      nickname,
-      avatar,
-      desc,
+      nickname: username,
+      avatar:
+        'http://columns-oss.oss-cn-shenzhen.aliyuncs.com/1619371424893-4156lluh.jpeg',
+      desc: '还没有留下简介',
     };
 
     await userRepository.save(newUser);
