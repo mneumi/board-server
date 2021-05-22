@@ -17,6 +17,7 @@ export class MusicService {
       listId: addMusicDto.listId,
       singer: addMusicDto.singer,
       song: addMusicDto.song,
+      songUrl: addMusicDto.songUrl,
       language: addMusicDto.language,
       coverImg: addMusicDto.coverImg,
     };

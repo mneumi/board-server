@@ -23,6 +23,9 @@ export class MusicEntity {
   @Column()
   coverImg: string;
 
+  @Column()
+  songUrl: string;
+
   @Column({
     type: 'enum',
     enum: MusicLanguage,
