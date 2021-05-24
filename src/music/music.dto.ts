@@ -37,6 +37,6 @@ export class SetMusicDto {
   @IsNotEmpty()
   songUrl: string;
 
-  @IsIn([MusicLanguage[0], MusicLanguage[1], MusicLanguage[2]])
+  @IsIn(['chinese', 'english'])
   language: MusicLanguage;
 }
